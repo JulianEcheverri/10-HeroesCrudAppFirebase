@@ -31,11 +31,33 @@ export class HeroesService {
     const heroeTemp = {
       ...heroe
     };
-    // firebase al actualizar un registro, los datos que no encuentre en la bd, seran agredados (el id), 
+    // firebase al actualizar un registro, los datos que no encuentre en la bd, seran agredados (el id),
     // pero el id ya esta especificado como clave del objeto y por ende se borra de heroe
     delete heroeTemp.id;
 
     // put para actualizar el heroe
     return this.http.put(`${this.url}/heroes/${heroe.id}.json`, heroeTemp);
+  }
+
+  getHeroe(id: string){
+    return this.http.get(`${this.url}/heroes/${id}.json`);
+  }
+
+  getHeroes() {
+    return this.http
+      .get(`${this.url}/heroes.json`)
+      .pipe(map(this.crearArregloDeHeroes));
+  }
+
+  private crearArregloDeHeroes(heroesObject: object) {
+    const heroes: HeroeModel[] = [];
+    if (heroesObject === null) return [];
+    Object.keys(heroesObject).forEach(key => {
+      const heroe: HeroeModel = heroesObject[key];
+      heroe.id = key;
+      heroes.push(heroe);
+    });
+
+    return heroes;
   }
 }

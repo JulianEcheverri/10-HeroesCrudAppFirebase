@@ -1,9 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { FormGroup, NgForm } from "@angular/forms";
-import { HeroeModel } from "../../models/heroe.model";
+import { HeroeModel } from '../../models/heroe.model';
 import { HeroesService } from "../../services/heroes.service";
 import Swal from "sweetalert2";
 import { Observable } from "rxjs";
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: "app-heroe",
@@ -15,7 +16,8 @@ export class HeroeComponent implements OnInit {
   formulario: FormGroup;
   heroe = new HeroeModel();
 
-  constructor(private heroesService: HeroesService) {}
+  // se inyecta servicio de router link para obtener la info de la url
+  constructor(private heroesService: HeroesService, public route: ActivatedRoute) {}
 
   guardar(form: NgForm) {
     if (form.invalid) {
@@ -51,5 +53,14 @@ export class HeroeComponent implements OnInit {
       });
     });
   }
-  ngOnInit() {}
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id !== 'nuevo') {
+      this.heroesService.getHeroe(id).subscribe((resp: HeroeModel) => {
+        this.heroe = resp;
+        this.heroe.id = id;
+      });
+    }
+  }
 }
