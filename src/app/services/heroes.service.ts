@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { HeroeModel } from "../models/heroe.model";
 // el operador map sirve para transformar lo que un observable puede regresar
-import { map } from "rxjs/operators";
+import { map, delay } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root"
@@ -39,6 +39,10 @@ export class HeroesService {
     return this.http.put(`${this.url}/heroes/${heroe.id}.json`, heroeTemp);
   }
 
+  deleteHeroe(id: string){
+    return this.http.delete(`${this.url}/heroes/${id}.json`);
+  }
+
   getHeroe(id: string){
     return this.http.get(`${this.url}/heroes/${id}.json`);
   }
@@ -46,7 +50,7 @@ export class HeroesService {
   getHeroes() {
     return this.http
       .get(`${this.url}/heroes.json`)
-      .pipe(map(this.crearArregloDeHeroes));
+      .pipe(map(this.crearArregloDeHeroes),delay(1000));
   }
 
   private crearArregloDeHeroes(heroesObject: object) {
